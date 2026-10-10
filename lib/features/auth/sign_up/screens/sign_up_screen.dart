@@ -4,6 +4,7 @@ import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../../core/theme.dart';
 import '../../login/screens/login_screen.dart';
+import '../../services/auth_service.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -14,6 +15,10 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
+
+    final AuthService authService = AuthService();
+  bool isLoading = false;
+  
   late final TextEditingController nameController;
   late final TextEditingController emailController;
   late final TextEditingController passwordController;
@@ -109,18 +114,57 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 const SizedBox(height: 40),
                 PrimaryButton(
-                  text: 'Sign Up',
-                  onPressed: () async {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LoginScreen(),
-                        ),
-                      );
-                    }
-                  },
-                ),
+  text: 'Sign Up',
+  isLoading: isLoading,
+  onPressed: isLoading
+      ? () {}
+      : () async {
+          if (!(_formKey.currentState?.validate() ?? false)) {
+            return;
+          }
+
+          setState(() {
+            isLoading = true;
+          });
+
+          try {
+            await authService.signUp(
+              name: nameController.text.trim(),
+              email: emailController.text.trim(),
+              password: passwordController.text,
+            );
+
+            if (!mounted) return;
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Account created successfully!'),
+              ),
+            );
+
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const LoginScreen(),
+              ),
+            );
+          } catch (e) {
+            if (!mounted) return;
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Sign up failed: $e'),
+              ),
+            );
+          } finally {
+            if (mounted) {
+              setState(() {
+                isLoading = false;
+              });
+            }
+          }
+        },
+),
                 const SizedBox(height: 24),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
