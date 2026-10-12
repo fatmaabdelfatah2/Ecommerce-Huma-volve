@@ -21,5 +21,11 @@ class ApiService {
         compact: true
       ),
     );
+
   }
+  Future<List<dynamic>> getProducts() async {
+  final response = await dio.get('products');
+
+  return response.data;
+}
 }

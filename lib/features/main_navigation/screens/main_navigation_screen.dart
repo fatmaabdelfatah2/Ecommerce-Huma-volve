@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../core/theme.dart';
+import '../../../core/network/api_service.dart';
+
 import '../../home/screens/home_screen.dart';
+import '../../home/cubit/home_cubit.dart';
 import '../../cart/screens/cart_screen.dart';
 import '../../profile/screens/profile_screen.dart';
 
@@ -8,14 +13,18 @@ class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
 
   @override
-  State<MainNavigationScreen> createState() => _MainNavigationScreenState();
+  State<MainNavigationScreen> createState() =>
+      _MainNavigationScreenState();
 }
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = [
-    const HomeScreen(),
+  late final List<Widget> _screens = [
+    BlocProvider(
+      create: (context) => HomeCubit(ApiService())..getProducts(),
+      child: const HomeScreen(),
+    ),
     const CartScreen(),
     const ProfileScreen(),
   ];
@@ -35,7 +44,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           ],
         ),
         child: ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(24),
+          ),
           child: BottomNavigationBar(
             currentIndex: _currentIndex,
             onTap: (index) {
