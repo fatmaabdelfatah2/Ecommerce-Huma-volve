@@ -1,4 +1,4 @@
-import '../../../core/dummy_data.dart';
+import '../domain/entities/product_entity.dart';
 
 abstract class HomeState {}
 
@@ -7,7 +7,7 @@ class HomeInitial extends HomeState {}
 class HomeLoading extends HomeState {}
 
 class HomeSuccess extends HomeState {
-  final List<Product> products;
+  final List<ProductEntity> products;
 
   HomeSuccess(this.products);
 }

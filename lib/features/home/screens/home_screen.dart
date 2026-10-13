@@ -202,8 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 24),
                       child: GridView.builder(
                         shrinkWrap: true,
-                        physics:
-                            const NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: state.products.length,
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
@@ -213,9 +212,35 @@ class _HomeScreenState extends State<HomeScreen> {
                           mainAxisSpacing: 16,
                         ),
                         itemBuilder: (context, index) {
-                          return ProductCard(
-                            product: state.products[index],
+                          final productEntity = state.products[index];
+
+                          // Convert ProductEntity to Product
+                          final product = Product(
+                            id: productEntity.id,
+                            name: productEntity.name,
+                            description: productEntity.description,
+                            price: productEntity.price,
+                            imageUrl: productEntity.imageUrl,
+                            colors: productEntity.colors.map((color) {
+                              switch (color.toLowerCase()) {
+                                case 'black':
+                                  return Colors.black;
+                                case 'white':
+                                  return Colors.white;
+                                case 'red':
+                                  return Colors.red;
+                                case 'blue':
+                                  return Colors.blue;
+                                case 'green':
+                                  return Colors.green;
+                                default:
+                                  return Colors.black;
+                              }
+                            }).toList(),
+                            sizes: productEntity.sizes,
                           );
+
+                          return ProductCard(product: product);
                         },
                       ),
                     );

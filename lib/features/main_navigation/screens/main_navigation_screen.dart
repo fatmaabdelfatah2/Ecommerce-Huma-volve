@@ -4,8 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/theme.dart';
 import '../../../core/network/api_service.dart';
 
-import '../../home/screens/home_screen.dart';
 import '../../home/cubit/home_cubit.dart';
+import '../../home/screens/home_screen.dart';
+import '../../home/data/datasources/home_remote_data_source.dart';
+import '../../home/data/repositories/home_repository_impl.dart';
+import '../../home/domain/usecases/get_products_use_case.dart';
+
 import '../../cart/screens/cart_screen.dart';
 import '../../profile/screens/profile_screen.dart';
 
@@ -22,7 +26,23 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   late final List<Widget> _screens = [
     BlocProvider(
-      create: (context) => HomeCubit(ApiService())..getProducts(),
+      create: (context) {
+        final apiService = ApiService();
+
+        final remoteDataSource = HomeRemoteDataSource(
+          apiService,
+        );
+
+        final repository = HomeRepositoryImpl(
+          remoteDataSource,
+        );
+
+        final getProductsUseCase = GetProductsUseCase(
+          repository,
+        );
+
+        return HomeCubit(getProductsUseCase)..getProducts();
+      },
       child: const HomeScreen(),
     ),
     const CartScreen(),
@@ -76,7 +96,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               BottomNavigationBarItem(
                 icon: Padding(
                   padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Icon(Icons.shopping_cart_outlined, size: 28),
+                  child: Icon(
+                    Icons.shopping_cart_outlined,
+                    size: 28,
+                  ),
                 ),
                 activeIcon: Padding(
                   padding: EdgeInsets.symmetric(vertical: 8.0),
