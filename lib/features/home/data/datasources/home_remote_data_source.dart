@@ -23,4 +23,12 @@ class HomeRemoteDataSource {
         )
         .toList();
   }
+
+  Future<ProductModel> getProductById({
+  required String id,
+}) async {
+  final response = await apiService.getProductById(id: id);
+
+  return ProductModel.fromJson(response);
+}
 }

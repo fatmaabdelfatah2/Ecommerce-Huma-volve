@@ -37,4 +37,11 @@ class ApiService {
 
   return response.data as List<dynamic>;
 }
+Future<Map<String, dynamic>> getProductById({
+  required String id,
+}) async {
+  final response = await dio.get('products/$id');
+
+  return response.data as Map<String, dynamic>;
+}
 }
