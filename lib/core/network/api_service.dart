@@ -21,5 +21,27 @@ class ApiService {
         compact: true
       ),
     );
+
   }
+  Future<List<dynamic>> getProducts({
+  required int offset,
+  required int limit,
+}) async {
+  final response = await dio.get(
+    'products',
+    queryParameters: {
+      'offset': offset,
+      'limit': limit,
+    },
+  );
+
+  return response.data as List<dynamic>;
+}
+Future<Map<String, dynamic>> getProductById({
+  required String id,
+}) async {
+  final response = await dio.get('products/$id');
+
+  return response.data as Map<String, dynamic>;
+}
 }
