@@ -23,9 +23,18 @@ class ApiService {
     );
 
   }
-  Future<List<dynamic>> getProducts() async {
-  final response = await dio.get('products');
+  Future<List<dynamic>> getProducts({
+  required int offset,
+  required int limit,
+}) async {
+  final response = await dio.get(
+    'products',
+    queryParameters: {
+      'offset': offset,
+      'limit': limit,
+    },
+  );
 
-  return response.data;
+  return response.data as List<dynamic>;
 }
 }

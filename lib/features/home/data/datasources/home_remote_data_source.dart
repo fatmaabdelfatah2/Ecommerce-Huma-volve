@@ -6,8 +6,14 @@ class HomeRemoteDataSource {
 
   HomeRemoteDataSource(this.apiService);
 
-  Future<List<ProductModel>> getProducts() async {
-    final response = await apiService.getProducts();
+  Future<List<ProductModel>> getProducts({
+    required int offset,
+    required int limit,
+  }) async {
+    final response = await apiService.getProducts(
+      offset: offset,
+      limit: limit,
+    );
 
     return response
         .map(

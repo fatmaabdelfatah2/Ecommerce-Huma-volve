@@ -1,22 +1,69 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../domain/entities/product_entity.dart';
 import '../domain/usecases/get_products_use_case.dart';
 import 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
   final GetProductsUseCase getProductsUseCase;
 
+  static const int pageSize = 10;
+
+  int _offset = 0;
+  bool _isFetching = false;
+  bool _hasMore = true;
+
+  final List<ProductEntity> _products = [];
+
   HomeCubit(this.getProductsUseCase) : super(HomeInitial());
 
   Future<void> getProducts() async {
-    emit(HomeLoading());
+    if (_isFetching || !_hasMore) return;
+
+    _isFetching = true;
+
+    if (_offset == 0) {
+      emit(HomeLoading());
+    } else {
+      emit(
+        HomeSuccess(
+          List<ProductEntity>.from(_products),
+          isLoadingMore: true,
+          hasMore: _hasMore,
+        ),
+      );
+    }
 
     try {
-      final products = await getProductsUseCase();
+      final newProducts = await getProductsUseCase(
+        offset: _offset,
+        limit: pageSize,
+      );
 
-      emit(HomeSuccess(products));
+      _products.addAll(newProducts);
+      _offset += newProducts.length;
+
+      _hasMore = newProducts.length == pageSize;
+
+      emit(
+        HomeSuccess(
+          List<ProductEntity>.from(_products),
+          hasMore: _hasMore,
+        ),
+      );
     } catch (e) {
-      emit(HomeError(e.toString()));
+      if (_products.isEmpty) {
+        emit(HomeError(e.toString()));
+      } else {
+        emit(
+          HomeSuccess(
+            List<ProductEntity>.from(_products),
+            hasMore: _hasMore,
+          ),
+        );
+      }
+    } finally {
+      _isFetching = false;
     }
   }
 }

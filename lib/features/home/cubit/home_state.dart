@@ -8,8 +8,14 @@ class HomeLoading extends HomeState {}
 
 class HomeSuccess extends HomeState {
   final List<ProductEntity> products;
+  final bool isLoadingMore;
+  final bool hasMore;
 
-  HomeSuccess(this.products);
+  HomeSuccess(
+    this.products, {
+    this.isLoadingMore = false,
+    this.hasMore = true,
+  });
 }
 
 class HomeError extends HomeState {

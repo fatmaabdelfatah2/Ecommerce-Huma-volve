@@ -6,7 +6,7 @@ import '../../../../core/widgets/primary_button.dart';
 import '../../../../core/theme.dart';
 
 import '../../login/screens/login_screen.dart';
-import '../../presentation/cubit/sign_up_state.dartsign_up_state.dart';
+import '../../presentation/cubit/sign_up_state.dart';
 import '../../services/auth_service.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/usecases/sign_up_use_case.dart';
